@@ -2,6 +2,7 @@
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
+import { CeloPrice } from "./CeloPrice";
 
 export function Header() {
   return (
@@ -28,6 +29,9 @@ export function Header() {
             <Link href="/subgraph">Subgraph</Link>
           </li>
           <li>
+            <Link href="/ens">ENS</Link>
+          </li>
+          <li>
             <a href="/contract">Contract</a>
           </li>
           <li>
@@ -42,7 +46,8 @@ export function Header() {
         </ul>
       </div>
 
-      <div className="navbar-end">
+      <div className="navbar-end gap-4">
+                                                                                                                                                                                                                                    <CeloPrice />
         <ConnectButton />
       </div>
     </div>

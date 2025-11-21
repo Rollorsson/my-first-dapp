@@ -1,11 +1,18 @@
 "use client";
 
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
+import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
+import { defineChain } from "viem";
 import {
-  celoSepolia as celoSepoliaTestnet,
-  celo as celoMainnet,
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  base,
+  sepolia,
+  celoAlfajores,
+  celoSepolia,
 } from "wagmi/chains";
 import {
   isServer,
@@ -13,27 +20,34 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 
-
-// Override Celo mainnet with icon
-const celo = {
-  ...celoMainnet,
+const celo = defineChain({
+  id: 42220,
+  name: "Celo",
+  nativeCurrency: {
+    name: "CELO",
+    symbol: "CELO",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://forno.celo.org"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Celoscan",
+      url: "https://celoscan.io",
+    },
+  },
   iconUrl: "https://s2.coinmarketcap.com/static/img/coins/200x200/5567.png",
-};
-
-// Override Celo Sepolia testnet with icon
-const celoSepolia = {
-  ...celoSepoliaTestnet,
-  iconUrl: "https://cryptologos.cc/logos/celo-celo-logo.svg?v=029",
-};
+  testnet: false,
+});
 
 const wagmiConfig = getDefaultConfig({
   appName: "ZeroToDapp",
   projectId:
     process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "YOUR_PROJECT_ID",
-  chains: [
-    celo,
-    celoSepolia,
-  ],
+  chains: [celo, celoSepolia, mainnet],
   ssr: true,
 });
 
@@ -65,9 +79,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider initialChain={celoSepolia}>
-          {children}
-        </RainbowKitProvider>
+        <RainbowKitProvider>{children}</RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

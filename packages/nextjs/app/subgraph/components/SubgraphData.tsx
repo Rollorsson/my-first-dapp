@@ -53,17 +53,12 @@ const query = gql`
   }
 `;
 
-const url = process.env.NEXT_PUBLIC_SUBGRAPH_URL || "";
-const headers: Record<string, string> = process.env.NEXT_PUBLIC_GRAPH_API_KEY
-  ? { Authorization: `Bearer ${process.env.NEXT_PUBLIC_GRAPH_API_KEY}` }
-  : {};
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function SubgraphData() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["subgraph-data"],
-    async queryFn() {
-      return await request(url, query, {}, headers);
-    },
+    queryFn: () => fetcher("/api/subgraph"),
   });
 
   if (isLoading) {
@@ -105,10 +100,8 @@ export default function SubgraphData() {
 
   const formatRole = (role: string) => {
     const roleNames: { [key: string]: string } = {
-      "0x0000000000000000000000000000000000000000000000000000000000000000":
-        "DEFAULT_ADMIN",
-      "0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6":
-        "MINTER_ROLE",
+      "0x0000000000000000000000000000000000000000000000000000000000000000": "DEFAULT_ADMIN",
+      "0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6": "MINTER_ROLE",
     };
     return roleNames[role] || `${role.slice(0, 10)}...${role.slice(-8)}`;
   };
